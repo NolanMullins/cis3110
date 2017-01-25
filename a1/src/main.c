@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <sys/types.h>
+#include <signal.h>
+#include <unistd.h>
 
 int main()
 {
-	printf("%d\n", fork());
+	sigset(1);
 	printf("Hi\n");
 }
