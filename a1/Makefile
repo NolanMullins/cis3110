@@ -1,4 +1,4 @@
-OBJQ1 = main.o list.o util.o
+OBJQ1 = main.o list.o util.o fnc.o
 FLAGS =-Wall -std=c99 -Iinclude
 EXE = run
 
@@ -16,3 +16,5 @@ list.o: src/list.c include/list.h
 	gcc -c src/list.c $(FLAGS)
 util.o: src/util.c include/util.h
 	gcc -c src/util.c $(FLAGS)
+fnc.o: src/fnc.c include/fnc.h
+	gcc -c src/fnc.c $(FLAGS)

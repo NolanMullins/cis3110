@@ -1,11 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <signal.h>
-#include <unistd.h>
 #include "util.h"
 #include "list.h"
+#include "fnc.h"
 
 void freeData(void* data)
 {
@@ -21,13 +19,11 @@ int main()
 		line[0] = '\0';
 		fgets(line, 512, stdin);
 		List* myList = parseLine(line);
-		for (int a = 0; a < listSize(myList); a++)
-			printf("%s\n", (char*)listGet(myList, a));
-		if (strcmp("exit", (char*)listGet(myList, 0)) == 0)
-		{
-			listClear(myList, freeData);
-			exit(0);
-		}
+		int tmp = strcmp("exit", (char*)listGet(myList, 0));
+		if (tmp != 0)
+			runCmd(myList);
 		listClear(myList, freeData);
+		if (tmp == 0)
+			exit(0);
 	}
 }
