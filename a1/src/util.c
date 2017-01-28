@@ -25,7 +25,8 @@ List* parseLine(char* line)
 	char word[size+1];
 	word[0] = '\0';
 	List* list = init();
-	for (int a = 0; a < size; a++)
+	int a;
+	for (a = 0; a < size; a++)
 	{
 		if (line[a] == '"')
 		{

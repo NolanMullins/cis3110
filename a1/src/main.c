@@ -14,7 +14,7 @@ void clr(void* data)
 }
 void clri(void* data)
 {
-	//free((pid_t*)data);
+	free((int*)data);
 }
 
 int main()
