@@ -184,6 +184,22 @@ void sort(List* head, int (*cmp)())
 	}
 }
 
+int indexOf(List* head, int (*cmp)(void* data))
+{
+	if (head == NULL)
+		return -1;
+	Node* tmp = head->list;
+	int a = 0;
+	while (tmp != NULL)
+	{
+		if (cmp(tmp->data) == 0)
+			return a;
+		a++;
+		tmp = tmp->next;
+	}
+	return -1;
+}
+
 //never use, just to check difference in speed
 void sort2(List* head, int (*cmp)(void* a, void* b))
 {

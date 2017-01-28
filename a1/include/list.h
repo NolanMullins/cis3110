@@ -33,6 +33,8 @@ void* listRemove(List* head, int index);
 List* listClear(List* head, void (*des)(void* a));
 void delHead(List* head);
 
+int indexOf(List* head, int (*cmp)(void* data));
+
 void sort(List* head, int (*cmp)(void* a, void* b));
 void sort2(List* head, int (*cmp)(void* a, void* b));
 

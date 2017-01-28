@@ -29,11 +29,10 @@ List* parseLine(char* line)
 	{
 		if (line[a] == '"')
 		{
-			append(word, line[a]);
-			do 
+			while (line[++a] != '"')
 			{
-				append(word, line[++a]);
-			} while (line[a] != '"');
+				append(word, line[a]);
+			}
 		}
 		else if (line[a] == ' ' || line[a] == '\n' || line[a] == '\t' || line[a] == '\r')
 		{
