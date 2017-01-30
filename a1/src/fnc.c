@@ -5,7 +5,9 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <time.h>
 #include "list.h"
+#include "art.h"
 
 int* gen(pid_t i)
 {
@@ -76,6 +78,7 @@ void arg(char** arr, int s)
 void child(List* cmd, int fileOut, int fileIn)
 {
 	FILE *fOut, *fIn;
+	initArt();
 	if (fileOut >= 0)
 	{
 		free((char*)listRemove(cmd, fileOut));
@@ -97,6 +100,8 @@ void child(List* cmd, int fileOut, int fileIn)
 		arg(&args[1], size-1);
 	else if (strcmp("tmp", args[0]) == 0)
 		tmp();
+	else if (strcmp("art", args[0]) == 0)
+		randomArt();
 	else
 		execvp(args[0], args);
 	free(args[size-1]);
