@@ -14,5 +14,6 @@ void computer();
 void spongebob();
 void thumbUp();
 void linux();
+void sadPepe();
 
 #endif
