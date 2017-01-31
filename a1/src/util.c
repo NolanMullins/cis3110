@@ -1,7 +1,12 @@
+/***********************************
+ * Nolan Mullins
+ * OS - A1
+ * 30/01/17
+ **********************************/
+
 #include <stdio.h>
 #include <string.h>
 #include "util.h"
-
 
 char* strgen(char* data)
 {
@@ -26,8 +31,10 @@ List* parseLine(char* line)
 	word[0] = '\0';
 	List* list = init();
 	int a;
+	//loop through the char buffer
 	for (a = 0; a < size; a++)
 	{
+		//if it finds a string read it all in
 		if (line[a] == '"')
 		{
 			while (line[++a] != '"')
@@ -35,6 +42,7 @@ List* parseLine(char* line)
 				append(word, line[a]);
 			}
 		}
+		//finds whitespace
 		else if (line[a] == ' ' || line[a] == '\n' || line[a] == '\t' || line[a] == '\r')
 		{
 			listAdd(list, strgen(word));

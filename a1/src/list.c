@@ -1,3 +1,8 @@
+/***********************************
+ * Nolan Mullins
+ * 30/01/17
+ **********************************/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <list.h>

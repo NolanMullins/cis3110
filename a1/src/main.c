@@ -1,3 +1,9 @@
+/***********************************
+ * Nolan Mullins
+ * OS - A1
+ * 30/01/17
+ **********************************/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
