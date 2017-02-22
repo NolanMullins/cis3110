@@ -211,7 +211,7 @@ void insertSorted(List* head, int (*cmp)(void* a, void* b), void* data)
 	int index = 0;
 	while (tmp != NULL)
 	{
-		if (cmp(tmp->data, data) >= 0)
+		if (cmp(tmp->data, data) > 0)
 		{
 			listInsert(head, data, index);
 			return;
