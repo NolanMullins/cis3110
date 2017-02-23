@@ -3,6 +3,7 @@
  * OS - A1
  * 30/01/17
  **********************************/
+#define _POSIX_SOURCE
 
 #include <stdio.h>
 #include <string.h>

@@ -49,6 +49,6 @@ __        __   _
 **********************************
 Assumptions
 **********************************
-	Aruments passed to the add command are infact valid numbers. A
+	Arugments passed to the add command are infact valid numbers. A
 hex number will begin with 0x. If an invalid number is found as an arg 
 the program will not add it.

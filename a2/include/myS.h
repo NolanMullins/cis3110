@@ -9,31 +9,36 @@ typedef struct data
 	int threadSwitch;
 	int procSwitch;
 
-	List* procs;
+	List* threads;
 } Data;
 
-typedef struct proc
+/*typedef struct proc
 {
 	int procNum;
 	int numThreads;
 
-	List* threads;
-} Proc;
+	//List* threads;
+} Proc;*/
 
 typedef struct thread
 {
 	int threadNum;
 	int arrival;
 	int numCPU;
+	int procNum;
 
-	List* cpus;
+	int totCpuTime;
+	int totIoTime;
+	int timePool;
+
+	//List* cpus;
 } Thread;
 
-typedef struct cpu
+/*typedef struct cpu
 {
 	int cpuNum;
 	int cpuTime;
 	int ioTime;
-} CPU;
+} CPU;*/
 
 #endif

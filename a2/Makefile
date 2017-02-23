@@ -1,4 +1,4 @@
-OBJ = src/main.o src/list.o src/parse.o
+OBJ = src/main.o src/list.o src/parse.o src/sim.o
 FLAGS = -Wall -Iinclude -std=c99 -Iinclude
 EXE = run
 

@@ -12,18 +12,18 @@ void readToEnd(FILE* f)
 int cmpThread(void* a, void* b)
 {
 	int arrivalA = ((Thread*)a)->arrival;
-	int arrivalB = ((Thread*)a)->arrival;
+	int arrivalB = ((Thread*)b)->arrival;
 	return arrivalA-arrivalB;
 }
 
-CPU* genCPU(int cpuNum, int cpuTime, int ioTime)
+/*CPU* genCPU(int cpuNum, int cpuTime, int ioTime)
 {
 	CPU* c = malloc(sizeof(CPU));
 	c->cpuNum = cpuNum;
 	c->cpuTime = cpuTime;
 	c->ioTime = ioTime;
 	return c;
-}
+}*/
 
 Thread* parseThread(FILE* f)
 {
@@ -35,42 +35,43 @@ Thread* parseThread(FILE* f)
 	t->threadNum = threadNum;
 	t->arrival = arrivalTime;
 	t->numCPU = numCPU;
-	t->cpus = init();
+	//t->cpus = init();
 
 	for (int a = 0; a < numCPU - 1; a++)
 	{
 		int cpuNum=0, cpuTime=0, ioTime=0;
 		fscanf(f, "%d %d %d", &cpuNum, &cpuTime, &ioTime);
 		readToEnd(f);
-		listAdd(t->cpus, genCPU(cpuNum, cpuTime, ioTime));
+		t->totCpuTime += cpuTime;
+		t->totIoTime += ioTime;
+		//listAdd(t->cpus, genCPU(cpuNum, cpuTime, ioTime));
 	}
 	int cpuNum=0, cpuTime=0;
 	fscanf(f, "%d %d", &cpuNum, &cpuTime);
 	readToEnd(f);
-	listAdd(t->cpus, genCPU(cpuNum, cpuTime, 0));
+	t->totCpuTime += cpuTime;
+	t->timePool = t->totCpuTime+t->totIoTime;
+	//listAdd(t->cpus, genCPU(cpuNum, cpuTime, 0));
 
 	return t;
 }
 
-Proc* parseProc(FILE* f)
+void parseProc(FILE* f, List* threads)
 {
 	int procNum=0, numThreads=0;
 	fscanf(f, "%d %d", &procNum, &numThreads);
-	printf("%d %d\n", procNum, numThreads);
+	//printf("%d %d\n", procNum, numThreads);
 	readToEnd(f);
 
-	Proc* p = malloc(sizeof(Proc));
-	p->procNum = procNum;
-	p->numThreads = numThreads;
-	p->threads = init();
 
 	for (int a = 0; a < numThreads; a++)
-	{
+	{	
+		Thread* t = parseThread(f);
+		t->procNum = procNum;
+		//printf("Proc: %d Thread: %d Arrival: %d\n", t->procNum, t->threadNum, t->arrival);
 		//void insertSorted(List* head, int (*cmp)(void* a, void* b), void* data);
-		insertSorted(p->threads, cmpThread, parseThread(f));
+		insertSorted(threads, cmpThread, t);
 	}
-
-	return p;
 }
 
 Data* parseFile(char* fileName)
@@ -80,18 +81,18 @@ Data* parseFile(char* fileName)
 	// number_of_processes thread_switch process_switch
 	int numProc=0, threadSwitch=0, procSwitch=0;
 	fscanf(f, "%d %d %d", &numProc, &threadSwitch, &procSwitch);
-	printf("%d %d %d\n", numProc, threadSwitch, procSwitch);
+	//printf("%d %d %d\n", numProc, threadSwitch, procSwitch);
 	readToEnd(f);
 	
 	Data* d = malloc(sizeof(Data));
 	d->numProc = numProc;
 	d->threadSwitch = threadSwitch;
 	d->procSwitch = procSwitch;
-	d->procs = init();
+	d->threads = init();
 
 	for (int a = 0; a < numProc; a++)
 	{
-		listAdd(d->procs, parseProc(f));
+		parseProc(f, d->threads);
 	}
 
 	return d;
