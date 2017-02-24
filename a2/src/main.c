@@ -6,8 +6,8 @@
 
 int main(int argc, char* argv[])
 {
-	Data* d = parseFile("data/ex.txt");
-	//fcfs(d, 1, 0);
-	RR(d, 1, 0);
+	Data* d = parseFile("data/testcase1.txt");
+	fcfs(d, 0, 0);
+	RR(d, 0, 0);
 	return 0;
 }
