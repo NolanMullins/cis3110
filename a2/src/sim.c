@@ -8,7 +8,6 @@ void detailPrint(int arrival, int serviceTime, int ioTime, int switchTime, int t
 	printf("Arrival time: %d\n", arrival);
 	printf("Service Time: %d\n", serviceTime);
 	printf("I/O Time: %d\n", ioTime);
-	printf("Switch Time: %d\n", switchTime);
 	printf("Turnaround Time: %d\n", turnaroundTime);
 	printf("Finish Time: %d\n", finishTime);
 }
@@ -121,9 +120,12 @@ void rrDetail(Thread* t, int switchTime, int* totalTime, int detail, int quantum
 	t->timePool = t->totCpuTime+t->totIoTime;
 	*totalTime += runTime+switchTime;
 	//*totalTime += serviceTime+ioTime+switchTime;
-
-	if (detail)
-		detailPrint(t->arrival, serviceTime, ioTime, switchTime, *totalTime - t->arrival, *totalTime);
+				
+	if (detail && t->timePool == 0)
+	{
+		printf("\nProcess: %d, Thread: %d\n",t->procNum, t->threadNum);
+		detailPrint(t->arrival, t->cpuWork, t->ioWork, switchTime, *totalTime - t->arrival, *totalTime);
+	}
 }
 
 void  RR(Data* data, int detail, int verbose)
@@ -142,11 +144,12 @@ void  RR(Data* data, int detail, int verbose)
 	while (listSize(threads) > 0)
 	{
 		Thread* t = (Thread*)listGet(threads, 0);
-
 		if (curProcNum != t->procNum)
 			currentSwitch = data->procSwitch;
 		else if (curThreadNum != t->threadNum)
 			currentSwitch = data->threadSwitch;
+		else
+			currentSwitch = 0;
 
 		curProcNum = t->procNum;
 		curThreadNum = t->threadNum;
@@ -157,8 +160,6 @@ void  RR(Data* data, int detail, int verbose)
 		if (verbose)
 			printf("At time: %d, Thread %d of process %d moves from ready to running\n", totalTime+currentSwitch, t->threadNum, t->procNum);
 		//printf("threadNum: %d, %d\n", t->threadNum, t->arrival);
-		if (detail)
-			printf("\nProcess: %d, Thread: %d\n",t->procNum, t->threadNum);
 
 		rrDetail(t, currentSwitch, &totalTime, detail, 100);
 

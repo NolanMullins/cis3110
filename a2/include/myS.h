@@ -29,6 +29,8 @@ typedef struct thread
 
 	int totCpuTime;
 	int totIoTime;
+	int cpuWork;
+	int ioWork;
 	int timePool;
 
 	//List* cpus;

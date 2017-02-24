@@ -35,6 +35,8 @@ Thread* parseThread(FILE* f)
 	t->threadNum = threadNum;
 	t->arrival = arrivalTime;
 	t->numCPU = numCPU;
+	t->totIoTime = 0;
+	t->totCpuTime = 0;
 	//t->cpus = init();
 
 	for (int a = 0; a < numCPU - 1; a++)
@@ -50,6 +52,8 @@ Thread* parseThread(FILE* f)
 	fscanf(f, "%d %d", &cpuNum, &cpuTime);
 	readToEnd(f);
 	t->totCpuTime += cpuTime;
+	t->ioWork = t->totIoTime;
+	t->cpuWork = t->totCpuTime;
 	t->timePool = t->totCpuTime+t->totIoTime;
 	//listAdd(t->cpus, genCPU(cpuNum, cpuTime, 0));
 
