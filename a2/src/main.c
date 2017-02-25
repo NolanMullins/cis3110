@@ -8,6 +8,10 @@
 
 //TODO
 //VALGRIND
+void del(void* data)
+{
+	free((Thread*)data);
+}
 
 int main(int argc, char* argv[])
 {
@@ -39,6 +43,8 @@ int main(int argc, char* argv[])
 		fcfs(d, detail, verbose);
 	else
 		RR(d, detail, verbose, q);
+
+	d->threads = listClear(d->threads, del);
 	free(d);
 	return 0;
 }
