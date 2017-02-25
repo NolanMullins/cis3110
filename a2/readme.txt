@@ -29,30 +29,29 @@ iv) 	Yes and No the program may include switch overhead if a thread is interrupt
 Problem
 **********************************
     This program will simulate a cpu scheduling algorithm that will execute a group of multithreaded processes in an
-OS. The program wil implement first come first serve and and round robin simulations.
+		OS. The program wil implement first come first serve and and round robin simulations.
 
 
 **********************************
 Algorithm
 **********************************
 	The two algorithms used are first come first serve and Round Robin.
-For the first come first serve the cpu will run each thread in sequencal order based upon when
-it arrived. The cpu will run the entire thread from start to finish with no interrupts.
-For the Round Robin the cpu will give each thread smaller burst of cpu time of 100u.
+		For the first come first serve the cpu will run each thread in sequencal order based upon when
+		it arrived. The cpu will run the entire thread from start to finish with no interrupts.
+		For the Round Robin the cpu will give each thread smaller burst of cpu time of 100u.
 
 **********************************
 Guide
 **********************************
-Compile
-type: make
-output: run
+	Compile
+	type: make
+	output: run
 
-Running
-type: ./run [args]
+	Running
+	type: ./run [args]
 
 **********************************
 Assumptions
 **********************************
-	I'm assuming the cpu can only work on one thread at a time.
-	If no quantum is specified or an invalid number, the quantum is set 
-		to 100
+	- I'm assuming the cpu can only work on one thread at a time.
+	- If no quantum is specified or an invalid number, the quantum is set to 100
