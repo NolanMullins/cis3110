@@ -80,8 +80,8 @@ void parseProc(FILE* f, List* threads)
 
 Data* parseFile(char* fileName)
 {
-	FILE* f = fopen(fileName, "r");
-
+	//FILE* f = fopen(fileName, "r");
+	FILE* f = stdin;
 	// number_of_processes thread_switch process_switch
 	int numProc=0, threadSwitch=0, procSwitch=0;
 	fscanf(f, "%d %d %d", &numProc, &threadSwitch, &procSwitch);

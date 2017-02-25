@@ -54,5 +54,5 @@ type: ./run [args]
 Assumptions
 **********************************
 	I'm assuming the cpu can only work on one thread at a time.
-	I have also set the time quantum to 100u as a smaller quantum results
-		in a much larger overhead cost.
+	If no quantum is specified or an invalid number, the quantum is set 
+		to 100

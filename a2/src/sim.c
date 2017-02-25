@@ -128,7 +128,7 @@ void rrDetail(Thread* t, int switchTime, int* totalTime, int detail, int quantum
 	}
 }
 
-void  RR(Data* data, int detail, int verbose)
+void  RR(Data* data, int detail, int verbose, int quantum)
 {
 	//Do shit now
 	List* threads = data->threads;
@@ -161,7 +161,7 @@ void  RR(Data* data, int detail, int verbose)
 			printf("At time: %d, Thread %d of process %d moves from ready to running\n", totalTime+currentSwitch, t->threadNum, t->procNum);
 		//printf("threadNum: %d, %d\n", t->threadNum, t->arrival);
 
-		rrDetail(t, currentSwitch, &totalTime, detail, 100);
+		rrDetail(t, currentSwitch, &totalTime, detail, quantum);
 
 		if (t->timePool > 0)
 		{
