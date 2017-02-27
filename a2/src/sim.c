@@ -5,7 +5,7 @@
 
 void detailPrint(int arrival, int serviceTime, int ioTime, int switchTime, int turnaroundTime, int finishTime)
 {
-	printf("Arrival time: %d\n", arrival);
+	printf("\nArrival time: %d\n", arrival);
 	printf("Service Time: %d\n", serviceTime);
 	printf("I/O Time: %d\n", ioTime);
 	printf("Turnaround Time: %d\n", turnaroundTime);
@@ -33,6 +33,20 @@ void threadDetail(Thread* t, int switchTime, int* totalTime, int detail)
 		detailPrint(t->arrival, serviceTime, ioTime, switchTime, *totalTime - t->arrival, *totalTime);
 }
 
+void fcfsVerboseReady(List* threads, int totalTime)
+{
+	for (int b = 0; b < listSize(threads); b++)
+	{
+		Thread* t = (Thread*)listGet(threads, b);
+		//printf("%d %d %d\n", t->procNum, t->threadNum, t->arrival);
+		if (t->arrival <= totalTime && t->ready == 0)
+		{
+			printf("\nAt time: %d, Thread %d of process %d moves from new to ready\n", t->arrival, t->threadNum, t->procNum);
+			t->ready = 1;
+		}
+	}
+}
+
 void fcfs(Data* data, int detail, int verbose)
 {
 	//Do shit now
@@ -56,15 +70,20 @@ void fcfs(Data* data, int detail, int verbose)
 			currentSwitch = data->procSwitch;
 		else if (curThreadNum != t->threadNum)
 			currentSwitch = data->threadSwitch;
+		else 
+			currentSwitch = 0;
 
 		curProcNum = t->procNum;
 		curThreadNum = t->threadNum;
 
 		if (verbose)
-			printf("At time: %d, Thread %d of process %d moves from new to ready\n", totalTime, t->threadNum, t->procNum);
+			fcfsVerboseReady(threads, totalTime);
+
+		//if (verbose)
+			//printf("At time: %d, Thread %d of process %d moves from new to ready\n", totalTime, t->threadNum, t->procNum);
 		switchTime += currentSwitch;
 		if (verbose)
-			printf("At time: %d, Thread %d of process %d moves from ready to running\n", totalTime+currentSwitch, t->threadNum, t->procNum);
+			printf("\nAt time: %d, Thread %d of process %d moves from ready to running\n", totalTime+currentSwitch, t->threadNum, t->procNum);
 		//printf("threadNum: %d, %d\n", t->threadNum, t->arrival);
 		if (detail)
 			printf("\nProcess: %d, Thread: %d\n",t->procNum, t->threadNum);
@@ -72,7 +91,10 @@ void fcfs(Data* data, int detail, int verbose)
 		threadDetail(t, currentSwitch, &totalTime, detail);
 
 		if (verbose)
-			printf("\nAt time: %d, Thread %d of process %d moves from running to termination\n\n", totalTime, t->threadNum, t->procNum);
+			fcfsVerboseReady(threads, totalTime);
+
+		if (verbose)
+			printf("\nAt time: %d, Thread %d of process %d moves from running to termination\n", totalTime, t->threadNum, t->procNum);
 
 		taTime += t->ta;
 		//currentSwitch = data->threadSwitch;
@@ -81,7 +103,7 @@ void fcfs(Data* data, int detail, int verbose)
 	printf("\n");
 	printf("Time: %d\n", totalTime);
 	//printf("Avg: %.1lf\n", (double)totalTime/(double)numThreads);
-	printf("Avg: %.1lf\n", taTime/(double)numThreads);
+	printf("Avg Turnaround: %.1lf\n", taTime/(double)numThreads);
 	
 
 	double util = (double)(totalTime-(switchTime+ioTime))/(double)(totalTime);
@@ -167,20 +189,22 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 
 		curProcNum = t->procNum;
 		curThreadNum = t->threadNum;
-
 		if (verbose)
-			printf("At time: %d, Thread %d of process %d moves from new to ready\n", totalTime, t->threadNum, t->procNum);
+			fcfsVerboseReady(threads, totalTime);
+		//if (verbose)
+			//printf("At time: %d, Thread %d of process %d moves from new to ready\n", totalTime, t->threadNum, t->procNum);
 		switchTime += currentSwitch;
 		if (verbose)
-			printf("At time: %d, Thread %d of process %d moves from ready to running\n", totalTime+currentSwitch, t->threadNum, t->procNum);
+			printf("\nAt time: %d, Thread %d of process %d moves from ready to running\n", totalTime+currentSwitch, t->threadNum, t->procNum);
 		//printf("threadNum: %d, %d\n", t->threadNum, t->arrival);
 
 		rrDetail(t, currentSwitch, &totalTime, detail, quantum);
-
+		if (verbose)
+			fcfsVerboseReady(threads, totalTime);
 		if (t->timePool > 0)
 		{
 			if (verbose)
-				printf("\nAt time: %d, Thread %d of process %d moves from running to blocked\n\n", totalTime, t->threadNum, t->procNum);
+				printf("\nAt time: %d, Thread %d of process %d moves from running to blocked\n", totalTime, t->threadNum, t->procNum);
 			Thread* cur = (Thread*)listRemove(threads, 0);
 			listAdd(threads, cur);
 		}
@@ -188,7 +212,7 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 		{
 
 			if (verbose)
-				printf("\nAt time: %d, Thread %d of process %d moves from running to termination\n\n", totalTime, t->threadNum, t->procNum);
+				printf("\nAt time: %d, Thread %d of process %d moves from running to termination\n", totalTime, t->threadNum, t->procNum);
 			Thread* cur = (Thread*)listRemove(threads, 0);
 			taTime += cur->ta;
 			free(cur);
@@ -202,7 +226,7 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 	printf("\n");
 	printf("Time: %d\n", totalTime);
 	//printf("Avg: %.1lf\n", (double)totalTime/(double)numThreads);
-	printf("Avg: %.1lf\n", taTime/(double)numThreads);
+	printf("Avg Turnaround: %.1lf\n", taTime/(double)numThreads);
 
 	double util = (double)(totalTime-(switchTime+ioTime))/(double)totalTime;
 	util *= 100;

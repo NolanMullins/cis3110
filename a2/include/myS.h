@@ -34,6 +34,7 @@ typedef struct thread
 	int timePool;
 
 	int ta;
+	int ready;
 
 	//List* cpus;
 } Thread;

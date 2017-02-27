@@ -55,6 +55,7 @@ Thread* parseThread(FILE* f)
 	t->ioWork = t->totIoTime;
 	t->cpuWork = t->totCpuTime;
 	t->timePool = t->totCpuTime+t->totIoTime;
+	t->ready = 0;
 	//listAdd(t->cpus, genCPU(cpuNum, cpuTime, 0));
 
 	return t;
