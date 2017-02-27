@@ -55,3 +55,4 @@ Assumptions
 **********************************
 	- I'm assuming the cpu can only work on one thread at a time.
 	- If no quantum is specified or an invalid number, the quantum is set to 100
+	- Only one IO device
