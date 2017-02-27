@@ -27,7 +27,7 @@ void threadDetail(Thread* t, int switchTime, int* totalTime, int detail)
 	}*/
     
 	*totalTime += serviceTime+ioTime+switchTime;
-
+	t->ta = *totalTime - t->arrival;
 	if (detail)
 		//detailPrint(t->arrival, serviceTime, ioTime, switchTime, serviceTime+ioTime+switchTime, *totalTime);
 		detailPrint(t->arrival, serviceTime, ioTime, switchTime, *totalTime - t->arrival, *totalTime);
@@ -47,6 +47,7 @@ void fcfs(Data* data, int detail, int verbose)
 	int curThreadNum = ((Thread*)listGet(threads, 0))->threadNum;
 
 	double ioTime = 0;
+	double taTime = 0;
 	for (int a = 0; a < listSize(threads); a++)
 	{
 		Thread* t = (Thread*)listGet(threads, a);
@@ -73,12 +74,14 @@ void fcfs(Data* data, int detail, int verbose)
 		if (verbose)
 			printf("\nAt time: %d, Thread %d of process %d moves from running to termination\n\n", totalTime, t->threadNum, t->procNum);
 
+		taTime += t->ta;
 		//currentSwitch = data->threadSwitch;
 		//currentSwitch = data->procSwitch;
 	}
 	printf("\n");
 	printf("Time: %d\n", totalTime);
-	printf("Avg: %.1lf\n", (double)totalTime/(double)numThreads);
+	//printf("Avg: %.1lf\n", (double)totalTime/(double)numThreads);
+	printf("Avg: %.1lf\n", taTime/(double)numThreads);
 	
 
 	double util = (double)(totalTime-(switchTime+ioTime))/(double)(totalTime);
@@ -122,7 +125,8 @@ void rrDetail(Thread* t, int switchTime, int* totalTime, int detail, int quantum
 	t->timePool = t->totCpuTime+t->totIoTime;
 	*totalTime += runTime+switchTime;
 	//*totalTime += serviceTime+ioTime+switchTime;
-				
+	if (t->timePool == 0)
+		t->ta = *totalTime - t->arrival;
 	if (detail && t->timePool == 0)
 	{
 		printf("\nProcess: %d, Thread: %d\n",t->procNum, t->threadNum);
@@ -144,6 +148,7 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 	int curThreadNum = ((Thread*)listGet(threads, 0))->threadNum;
 
 	double ioTime = 0;
+	double taTime = 0;
 	for (int a = 0; a < listSize(threads); a++)
 	{
 		Thread* t = (Thread*)listGet(threads, a);
@@ -185,6 +190,7 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 			if (verbose)
 				printf("\nAt time: %d, Thread %d of process %d moves from running to termination\n\n", totalTime, t->threadNum, t->procNum);
 			Thread* cur = (Thread*)listRemove(threads, 0);
+			taTime += cur->ta;
 			free(cur);
 		}
 		
@@ -195,7 +201,8 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 
 	printf("\n");
 	printf("Time: %d\n", totalTime);
-	printf("Avg: %.1lf\n", (double)totalTime/(double)numThreads);
+	//printf("Avg: %.1lf\n", (double)totalTime/(double)numThreads);
+	printf("Avg: %.1lf\n", taTime/(double)numThreads);
 
 	double util = (double)(totalTime-(switchTime+ioTime))/(double)totalTime;
 	util *= 100;

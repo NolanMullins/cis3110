@@ -33,6 +33,8 @@ typedef struct thread
 	int ioWork;
 	int timePool;
 
+	int ta;
+
 	//List* cpus;
 } Thread;
 
