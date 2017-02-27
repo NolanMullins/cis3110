@@ -46,10 +46,11 @@ void fcfs(Data* data, int detail, int verbose)
 	int curProcNum = ((Thread*)listGet(threads, 0))->procNum;
 	int curThreadNum = ((Thread*)listGet(threads, 0))->threadNum;
 
+	double ioTime = 0;
 	for (int a = 0; a < listSize(threads); a++)
 	{
 		Thread* t = (Thread*)listGet(threads, a);
-
+		ioTime += t->ioWork;
 		if (curProcNum != t->procNum)
 			currentSwitch = data->procSwitch;
 		else if (curThreadNum != t->threadNum)
@@ -78,8 +79,9 @@ void fcfs(Data* data, int detail, int verbose)
 	printf("\n");
 	printf("Time: %d\n", totalTime);
 	printf("Avg: %.1lf\n", (double)totalTime/(double)numThreads);
+	
 
-	double util = (double)(totalTime-switchTime)/(double)totalTime;
+	double util = (double)(totalTime-(switchTime+ioTime))/(double)(totalTime);
 	util *= 100;
 	printf("CPU Util: %.1lf%%\n", util);
 }
@@ -141,6 +143,13 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 	int curProcNum = ((Thread*)listGet(threads, 0))->procNum;
 	int curThreadNum = ((Thread*)listGet(threads, 0))->threadNum;
 
+	double ioTime = 0;
+	for (int a = 0; a < listSize(threads); a++)
+	{
+		Thread* t = (Thread*)listGet(threads, a);
+		ioTime += t->ioWork;
+	}
+
 	while (listSize(threads) > 0)
 	{
 		Thread* t = (Thread*)listGet(threads, 0);
@@ -183,11 +192,12 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 		//currentSwitch = data->threadSwitch;
 		//currentSwitch = data->procSwitch;
 	}
+
 	printf("\n");
 	printf("Time: %d\n", totalTime);
 	printf("Avg: %.1lf\n", (double)totalTime/(double)numThreads);
 
-	double util = (double)(totalTime-switchTime)/(double)totalTime;
+	double util = (double)(totalTime-(switchTime+ioTime))/(double)totalTime;
 	util *= 100;
 	printf("CPU Util: %.1lf%%\n", util);
 }
