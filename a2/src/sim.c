@@ -3,6 +3,7 @@
 #include "list.h"
 #include "myS.h"
 
+//just prints that stuff out with a decent format
 void detailPrint(int arrival, int serviceTime, int ioTime, int switchTime, int turnaroundTime, int finishTime)
 {
 	printf("\nArrival time: %d\n", arrival);
@@ -11,7 +12,7 @@ void detailPrint(int arrival, int serviceTime, int ioTime, int switchTime, int t
 	printf("Turnaround Time: %d\n", turnaroundTime);
 	printf("Finish Time: %d\n", finishTime);
 }
-
+//Run a thread on the cpu
 void threadDetail(Thread* t, int switchTime, int* totalTime, int detail)
 {
 	int serviceTime = t->totCpuTime;
@@ -32,7 +33,7 @@ void threadDetail(Thread* t, int switchTime, int* totalTime, int detail)
 		//detailPrint(t->arrival, serviceTime, ioTime, switchTime, serviceTime+ioTime+switchTime, *totalTime);
 		detailPrint(t->arrival, serviceTime, ioTime, switchTime, *totalTime - t->arrival, *totalTime);
 }
-
+//checks is a new process has 'arrived' in the ready queue
 void fcfsVerboseReady(List* threads, int totalTime)
 {
 	for (int b = 0; b < listSize(threads); b++)
@@ -47,9 +48,9 @@ void fcfsVerboseReady(List* threads, int totalTime)
 	}
 }
 
+//First come first serve
 void fcfs(Data* data, int detail, int verbose)
 {
-	//Do shit now
 	List* threads = data->threads;
 	int switchTime = 0;
 	int totalTime = 0;
@@ -62,6 +63,7 @@ void fcfs(Data* data, int detail, int verbose)
 
 	double ioTime = 0;
 	double taTime = 0;
+	//loop through the threads and run them
 	for (int a = 0; a < listSize(threads); a++)
 	{
 		Thread* t = (Thread*)listGet(threads, a);
@@ -87,7 +89,7 @@ void fcfs(Data* data, int detail, int verbose)
 		//printf("threadNum: %d, %d\n", t->threadNum, t->arrival);
 		if (detail)
 			printf("\nProcess: %d, Thread: %d\n",t->procNum, t->threadNum);
-
+		//run the current thread
 		threadDetail(t, currentSwitch, &totalTime, detail);
 
 		if (verbose)
@@ -116,6 +118,8 @@ void rrDetail(Thread* t, int switchTime, int* totalTime, int detail, int quantum
 	int serviceTime = 0;
 	int ioTime = 0;
 	//printf("%d %d\n",t->totCpuTime, quantum);
+
+	//allow the cpu to do work on a quantum amt of the work total
 	if (t->totCpuTime > quantum)
 	{
 		serviceTime = quantum;
@@ -149,6 +153,7 @@ void rrDetail(Thread* t, int switchTime, int* totalTime, int detail, int quantum
 	//*totalTime += serviceTime+ioTime+switchTime;
 	if (t->timePool == 0)
 		t->ta = *totalTime - t->arrival;
+	//if the thread is done
 	if (detail && t->timePool == 0)
 	{
 		printf("\nProcess: %d, Thread: %d\n",t->procNum, t->threadNum);
@@ -158,7 +163,6 @@ void rrDetail(Thread* t, int switchTime, int* totalTime, int detail, int quantum
 
 void  RR(Data* data, int detail, int verbose, int quantum)
 {
-	//Do shit now
 	List* threads = data->threads;
 	int switchTime = 0;
 	int totalTime = 0;
@@ -171,12 +175,13 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 
 	double ioTime = 0;
 	double taTime = 0;
+	//gather the amount of ioWork to be done
 	for (int a = 0; a < listSize(threads); a++)
 	{
 		Thread* t = (Thread*)listGet(threads, a);
 		ioTime += t->ioWork;
 	}
-
+	//loop while there are processes that need to be run
 	while (listSize(threads) > 0)
 	{
 		Thread* t = (Thread*)listGet(threads, 0);
@@ -196,11 +201,14 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 		switchTime += currentSwitch;
 		if (verbose)
 			printf("\nAt time: %d, Thread %d of process %d moves from ready to running\n", totalTime+currentSwitch, t->threadNum, t->procNum);
-		//printf("threadNum: %d, %d\n", t->threadNum, t->arrival);
-
+		
+		//run the thread
 		rrDetail(t, currentSwitch, &totalTime, detail, quantum);
+
 		if (verbose)
 			fcfsVerboseReady(threads, totalTime);
+
+		//if the thread still has work left
 		if (t->timePool > 0)
 		{
 			if (verbose)
@@ -208,19 +216,16 @@ void  RR(Data* data, int detail, int verbose, int quantum)
 			Thread* cur = (Thread*)listRemove(threads, 0);
 			listAdd(threads, cur);
 		}
+		//if the thread is done
 		else
 		{
-
+			//get rid of it
 			if (verbose)
 				printf("\nAt time: %d, Thread %d of process %d moves from running to termination\n", totalTime, t->threadNum, t->procNum);
 			Thread* cur = (Thread*)listRemove(threads, 0);
 			taTime += cur->ta;
 			free(cur);
 		}
-		
-
-		//currentSwitch = data->threadSwitch;
-		//currentSwitch = data->procSwitch;
 	}
 
 	printf("\n");
