@@ -1,12 +1,12 @@
-OBJ = src/main.o src/list.o
+OBJ = src/p1.o src/list.o
 FLAGS = -Wall -Iinclude -std=c99 -lpthread
-EXE = run
+EXE1 = p1
 
 all: $(OBJ)
-	gcc $(OBJ) $(FLAGS) -o $(EXE)
+	gcc $(OBJ) $(FLAGS) -o $(EXE1)
 
 clean: 
-	rm $(OBJ) $(EXE)
+	rm $(OBJ) $(EXE1)
 	
 %.o : %.c
 	gcc -c $*.c $(FLAGS) -o $*.o

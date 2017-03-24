@@ -12,6 +12,8 @@ typedef struct data
 	int tid;
 	State state; 
 	int hungry;
+	int* forks;
+	pthread_mutex_t* mutex;
 }Data;
 
 
