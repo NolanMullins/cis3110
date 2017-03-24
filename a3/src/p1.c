@@ -8,7 +8,21 @@
 #include <time.h>
 
 #include "list.h"
-#include "dataStruct.h"
+
+typedef enum state
+{
+	thinking,
+	eating
+} State;
+
+typedef struct data 
+{
+	int tid;
+	State state; 
+	int hungry;
+	int* forks;
+	pthread_mutex_t* mutex;
+}Data;
 
 void *phil(void *param)
 {
@@ -41,9 +55,10 @@ void *phil(void *param)
 
 int main(int argc, char* argv[])
 {
-
-	int numP = 4;
-	int numE = 2;
+	if (argc < 3)
+		throwError("Not enough args");
+	int numP = atoi(argv[1]);
+	int numE = atoi(argv[2]);
 	//int threadCount = sysconf(_SC_NPROCESSORS_ONLN);
 
 	pthread_t threads[numP];
