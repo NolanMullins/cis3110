@@ -9,6 +9,7 @@ typedef struct proc
 {
 	char id;
 	int size;
+	int timesSwapped;
 }Proc;
 
 //this is used to remove shit i dont want
@@ -32,6 +33,7 @@ List* loadProc(char* fileName)
 		Proc* p = malloc(sizeof(Proc));
 		p->id = procID;
 		p->size = procSize;
+		p->timesSwapped = 0;
 		listAdd(procData, p);
 		procSize = 0;
 	}
@@ -40,7 +42,7 @@ List* loadProc(char* fileName)
 	return procData;
 }
 
-Proc* removeProc(char* mem, char id)
+void removeProc(char* mem, char id)
 {
 	int size = 0;
 	for (int a = 0; a < 128; a++)
@@ -51,15 +53,11 @@ Proc* removeProc(char* mem, char id)
 			size++;
 		}
 	}
-	Proc* p = malloc(sizeof(Proc));
-	p->id = id;
-	p->size = size;
-	return p;
 }
 
-void addProc(Proc* p, char* mem)
+int addProc(Proc* p, char* mem)
 {
-	printf("%c %d\n", p->id, p->size);
+	//printf("%c %d\n", p->id, p->size);
 	for (int a = 0; a < 128-p->size; a++)
 	{
 		int flag = 0;
@@ -70,42 +68,94 @@ void addProc(Proc* p, char* mem)
 		}
 		if (flag)
 			continue;
-		printf("index: %d\n", a);
 		//add proc to memory
 		for (int b = a; b < a+p->size; b++)
 		{
 			mem[b] = p->id;
-		} 
-		break;
+		}
+		return a;
 	}
+	return -1;
+}
+
+void freeProc(void* data)
+{
+	free((Proc*)data);
+}
+
+int numHoles(char* mem)
+{
+	int holes = 0;
+	int flag = 1;
+	for (int a = 0; a < 128; a++)
+	{
+		if (flag)
+		{
+			if (mem[a] == '\0')
+				flag = 0;
+		}
+		else if (mem[a] != '\0')
+		{
+			flag = 1;
+			holes++;
+		}
+	}
+	if (flag == 0)
+		holes++;
+	return holes;
+}
+
+int memInUse(char* mem)
+{
+	int inUse = 0;
+	for (int a = 0; a < 128; a++)
+		if (mem[a] != '\0')
+			inUse++;
+	return inUse;
 }
 
 int main(int argc, char* argv[])
 {
-
 	char mem[128];
 	List* procData = loadProc("data/proc.txt");
-	*mem = 0;
-	printf("*********************\n");
+	List* inMem = init();
+
+	int loads = 0;
+	int avgProcs = 0;
+	int avgHoles = 0;
+	float memUsage = 0;
+
+
 	for (int a = 0; a < 128; a++)
-	{
 		mem[a] = '\0';
-		printf("%d : %c\n", a, mem[a]);
-	}
-		printf("*********************\n");
 	while (listSize(procData) > 0)
 	{
+		loads++;
 		Proc* p = (Proc*)listRemove(procData, 0);
-		addProc(p, &mem[0]);
-		printf("*********************\n");
-		for (int a = 0; a < 128; a++)
+		while (addProc(p, &mem[0]) == -1)
 		{
-			printf("%d : %c\n", a, mem[a]);
+			//swap a process out
+			Proc* swap = (Proc*)listRemove(inMem, 0);
+			removeProc(mem, swap->id);
+			swap->timesSwapped += 1;
+			if (swap->timesSwapped >= 3)
+				free(swap);
+			else
+				listAdd(procData, swap);
 		}
-		printf("*********************\n");
-		free(p);
+		listAdd(inMem, p);
+		avgProcs += listSize(inMem);
+		avgHoles += numHoles(mem);
+		memUsage += (float)memInUse(mem)/128.0f;
+		printf("Loaded ID: %c, #procs: %d, #holes: %d, %%mem: %.2f, total %%mem: %.2f\n", p->id, listSize(inMem), numHoles(mem), 100*((float)memInUse(mem)/128.0f), 100*((float)memUsage/(float)loads));
 	}
 
+	//for (int a = 0; a < 128; a++)
+	//	printf("%d : %c\n", a, mem[a]);
+	printf("Total loads: %d, avg # procs: %.2f, avg # holes: %.2f, %% mem: %.2f\n", loads, (float)avgProcs/(float)loads, (float)avgHoles/(float)loads, 100*((float)memUsage/(float)loads));
+
+	procData = listClear(procData, freeProc);
+	inMem = listClear(inMem, freeProc);
 
 	return 0;
 }
