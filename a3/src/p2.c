@@ -149,7 +149,7 @@ void firstFist(char* fileName)
 		avgProcs += listSize(inMem);
 		avgHoles += numHoles(mem);
 		memUsage += (float)memInUse(mem)/128.0f;
-		//printf("Loaded ID: %c, #procs: %d, #holes: %d, %%mem: %.2f, total %%mem: %.2f\n", p->id, listSize(inMem), numHoles(mem), 100*((float)memInUse(mem)/128.0f), 100*((float)memUsage/(float)loads));
+		printf("Loaded ID: %c, #procs: %d, #holes: %d, %%mem: %.2f, total %%mem: %.2f\n", p->id, listSize(inMem), numHoles(mem), 100*((float)memInUse(mem)/128.0f), 100*((float)memUsage/(float)loads));
 	}
 	/*printf("****************\n");
 	for (int a = 0; a < 128; a++)
@@ -219,7 +219,7 @@ void nextFit(char* fileName)
 		avgProcs += listSize(inMem);
 		avgHoles += numHoles(mem);
 		memUsage += (float)memInUse(mem)/128.0f;
-		//printf("Loaded ID: %c, #procs: %d, #holes: %d, %%mem: %.2f, total %%mem: %.2f\n", p->id, listSize(inMem), numHoles(mem), 100*((float)memInUse(mem)/128.0f), 100*((float)memUsage/(float)loads));
+		printf("Loaded ID: %c, #procs: %d, #holes: %d, %%mem: %.2f, total %%mem: %.2f\n", p->id, listSize(inMem), numHoles(mem), 100*((float)memInUse(mem)/128.0f), 100*((float)memUsage/(float)loads));
 	}
 	
 	printf("Total loads: %d, avg # procs: %.2f, avg # holes: %.2f, %% mem: %.2f\n", loads, (float)avgProcs/(float)loads, (float)avgHoles/(float)loads, 100*((float)memUsage/(float)loads));
@@ -310,7 +310,7 @@ void bestFit(char* fileName)
 		avgProcs += listSize(inMem);
 		avgHoles += numHoles(mem);
 		memUsage += (float)memInUse(mem)/128.0f;
-		//printf("Loaded ID: %c, #procs: %d, #holes: %d, %%mem: %.2f, total %%mem: %.2f\n", p->id, listSize(inMem), numHoles(mem), 100*((float)memInUse(mem)/128.0f), 100*((float)memUsage/(float)loads));
+		printf("Loaded ID: %c, #procs: %d, #holes: %d, %%mem: %.2f, total %%mem: %.2f\n", p->id, listSize(inMem), numHoles(mem), 100*((float)memInUse(mem)/128.0f), 100*((float)memUsage/(float)loads));
 	}
 	/*printf("****************\n");
 	for (int a = 0; a < 128; a++)
@@ -402,7 +402,7 @@ void worstFit(char* fileName)
 		avgProcs += listSize(inMem);
 		avgHoles += numHoles(mem);
 		memUsage += (float)memInUse(mem)/128.0f;
-		//printf("Loaded ID: %c, #procs: %d, #holes: %d, %%mem: %.2f, total %%mem: %.2f\n", p->id, listSize(inMem), numHoles(mem), 100*((float)memInUse(mem)/128.0f), 100*((float)memUsage/(float)loads));
+		printf("Loaded ID: %c, #procs: %d, #holes: %d, %%mem: %.2f, total %%mem: %.2f\n", p->id, listSize(inMem), numHoles(mem), 100*((float)memInUse(mem)/128.0f), 100*((float)memUsage/(float)loads));
 	}
 	/*printf("****************\n");
 	for (int a = 0; a < 128; a++)
@@ -415,13 +415,15 @@ void worstFit(char* fileName)
 
 int main(int argc, char* argv[])
 {
+	if (argc < 2)
+		throwError("No file arg passed");
 	printf("First fit\n");
-	firstFist("data/proc.txt");
-	printf("Next fit\n");
-	nextFit("data/proc.txt");
-	printf("Best fit\n");
-	bestFit("data/proc.txt");
-	printf("Worst fit\n");
-	worstFit("data/proc.txt");
+	firstFist(argv[1]);
+	printf("\nNext fit\n");
+	nextFit(argv[1]);
+	printf("\nBest fit\n");
+	bestFit(argv[1]);
+	printf("\nWorst fit\n");
+	worstFit(argv[1]);
 	return 0;
 }
