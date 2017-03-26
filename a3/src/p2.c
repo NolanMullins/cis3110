@@ -321,9 +321,58 @@ void bestFit(char* fileName)
 	inMem = listClear(inMem, freeProc);
 }
 
+int addWorst(Proc* p, char* mem)
+{
+	int index = 0;
+	int holeSize = -1;
+	//printf("%c %d\n", p->id, p->size);
+	int flag = 1;
+	int startIndex = 0;
+	for (int a = 0; a < 128; a++)
+	{
+		if (flag)
+		{
+			if (mem[a] == '\0')
+			{
+				startIndex = a;
+				flag = 0;
+			}
+		}
+		else if (mem[a] != '\0')
+		{
+			flag = 1;
+			int size = a-startIndex;
+			if (size >= p->size && size > holeSize)
+			{
+				index = startIndex;
+				holeSize = size;
+			}
+		}
+	}
+	if (flag == 0)
+	{
+		int size = 128-startIndex;
+		if (size >= p->size && size > holeSize)
+		{
+			index = startIndex;
+			holeSize = size;
+		}
+	}
+	//printf("index: %d hole: %d\n", index, holeSize);
+	if (holeSize != -1)
+	{
+		for (int a = index; a < index+p->size; a++)
+		{
+			mem[a] = p->id;
+		}
+		return index;
+	}
+	return -1;
+}
+
 void worstFit(char* fileName)
 {
-char mem[128];
+	char mem[128];
 	List* procData = loadProc(fileName);
 	List* inMem = init();
 
@@ -332,14 +381,13 @@ char mem[128];
 	int avgHoles = 0;
 	float memUsage = 0;
 
-
 	for (int a = 0; a < 128; a++)
 		mem[a] = '\0';
 	while (listSize(procData) > 0)
 	{
 		loads++;
 		Proc* p = (Proc*)listRemove(procData, 0);
-		while (addProc(p, &mem[0]) == -1)
+		while (addWorst(p, &mem[0]) == -1)
 		{
 			//swap a process out
 			Proc* swap = (Proc*)listRemove(inMem, 0);
